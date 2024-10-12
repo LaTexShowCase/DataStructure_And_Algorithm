@@ -1,0 +1,545 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{subfig}
+\usepackage{tcolorbox}
+\usepackage{listings}
+\usepackage[left=20mm, right=20mm]{geometry}
+\usepackage{enumitem}
+\usepackage{amsthm}
+\usepackage{algpseudocodex}
+\usepackage{algorithmicx}
+\usepackage[boxed]{algorithm}
+\usepackage{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{corollaryLemma}{Corollary}[lemma]
+\newtheorem{prop}{Proposition}
+\newtheorem{claim}{Claim}[theorem]
+
+\lstset{showstringspaces=false,
+        numbers=left, 
+		numberstyle=\small}
+\usepackage{algpseudocodex}
+\usepackage{algorithmicx}
+\usepackage{enumitem}
+\usepackage[boxed]{algorithm}
+\usepackage{float}
+% Optional arguments for the lstlisting environtment:
+% frame=single
+% language=...
+% label=...	
+% caption/title=...
+\graphicspath{{}}
+
+\algdef{SE}[CLASS]{Class}{EndClass}[1]{\textbf{Class} \textsc{#1}}{}
+\algnewcommand{\AND}{\textbf{ or }}
+\algnewcommand{\OR}{\textbf{ or }}
+\algnewcommand{\Int}{\textbf{int }}
+\algnewcommand{\Real}{\textbf{real }}
+
+\title{COMP2123-Assignment 1}
+\author{}
+
+\begin{document}
+	\maketitle
+	\section*{Notation Clarification}
+	\begin{center}
+		\begin{tabular}{ c c }
+			\(a \gets 0\) & The value of variable 0 is assigned to variable a. \\ 
+			\([a:b]\) & The sequence \(a,\, a + 1, \ldots, \, b - 1\).\\
+			\verb|boolean| & The data type representing integers.\\
+			\verb|float| & The data type representing float.\\
+			\verb|self| & a reference to the current instance of the class, and is used to access variables that belongs to the class\\
+			\verb|real| & The data type representing the real numbers.\\
+			\verb|void| & Used to show that a function does not return anything.\\
+			\verb|null| & The variable representing nothingness.\\
+			\verb|bool| & The data type representing a boolean value which is either true or false.\\
+		\end{tabular}
+	\end{center} 
+
+	\newpage \section*{Problem 1}
+
+
+	\begin{algorithm}[H]
+		\caption{Pseudocode 1}
+	\begin{algorithmic}[1]
+		\Function{algorithm}{A}
+		\State \(n \gets \text{length of } A \hspace{3cm}\)
+		\State \(\text{num\_matches} \gets 0 \hspace{3cm}\)
+
+		\For{\(i \in [0 : n]\)}
+			\For{\(j \in [i + 1: n]\)}
+				\If{\(A[i] == A[j]\)}       
+					\State \(\text{num\_matches} \gets \text{num\_matches} + 1 \hspace{1cm}\) 
+				\EndIf{}
+			\EndFor{}
+		\EndFor{}
+		\State \Return \(\text{num\_matches}\)	
+		\EndFunction{}
+		% \State $curr\_val, curr\_ans \leftarrow 0, (N, N)$
+		% 	\For{$i = 0 \to n - 1$}
+		% 		\For{$j = i \to n - 1$}
+		% 			\State $s \leftarrow 0$
+		% 			\For{$k = i \to j$}
+		% 				\State $s \leftarrow s + A[k]$
+		% 			\EndFor
+		% 			\If{$s > curr\_val$}
+		% 				\State $curr\_val, curr\_ans \leftarrow s, (i, j)$
+		% 			\EndIf
+		% 		\EndFor
+		% 	\EndFor
+		% 	\State \Return $curr\_ans$
+	\end{algorithmic}
+	\end{algorithm}
+
+	\subsection*{a)}
+
+	All the assignments in line 2 and 3 take \(O(1)\) time, The loop in line 4 will run for n times, inside that loop, we have second loop at line 5 that will run \(n - (i + 1)\) times, inside that loop, we perform at most one assignment that is going to cost O(1) time.   
+	
+	Let \(T(n)\) be the running time of the algorithm with n is the length of input array A, we can bound it as below.
+
+	\begin{align*}
+		T(n) &=O(1) + O(1) + \sum_{i = 0}^{n - 1}\sum_{j = i + 1}^{n - 1} O(1)\\
+		&\leq O(1) + O(1) + \sum_{i = 0}^{n - 1} \sum_{j = 0}^{n - 1} O(1)\\
+		&\leq O(1) + O(1) + \sum_{i = 0}^{n - 1} O(n)\\
+		&\leq O(1) + O(1) + \sum_{i = 0}^{n - 1} O(n)\\
+		&\leq O(1) + O(1) + O(n^2)\\
+		&\leq O(n^2)
+	\end{align*}
+
+	\(O(n^2)\) is the upperbound of this algorithm.
+
+	\subsection*{b)}
+	To lowerbound the running time of this algorithm, we consider only the running time of algorithm during the last \(\frac{n}{2}\) iteration. Since this is part of the full execution, analyzing only part  gives a lower bound on the total running time.
+
+	Let \(T(n)\) be the running time of the algorithm with n is the length of input array A, we can bound it as below.
+	
+	\begin{align*}
+		T(n) &=\Omega(1) + \Omega(1) + \sum_{i = \frac{n}{2}}^{n - 1}\sum_{j = i + 1}^{n - 1} \Omega(1)\\
+		&\geq \Omega(1) + \Omega(1) + \sum_{i = \frac{n}{2}}^{n - 1}\sum_{j = \frac{n}{2} + 1}^{n - 1} \Omega(1)\\
+		&\geq \Omega(1) + \Omega(1) + \sum_{i = \frac{n}{2}}^{n - 1}((n - 1) - (\frac{n}{2} + 1) + 1)\\
+		&\geq \Omega(1) + \Omega(1) + \sum_{i = \frac{n}{2}}^{n - 1}(\frac{n}{2} - 1)\\
+		&\geq \Omega(1) + \Omega(1) + \frac{n^2}{4} - \frac{n}{2}\\
+		&\geq \Omega(n^2)
+	\end{align*}
+
+	\(\Omega(n^2)\) is the lower bound of this algorithm.
+
+
+	
+	\newpage\section*{Problem 2}
+
+	\subsection*{a)}
+	Stack ADT that we want to extend will have the following operations:
+
+	\begin{itemize}
+		\item \verb|void push(int e)|: inserts an element, \verb|e|.
+		\item \verb|int pop()|: removes and return the last inserted element.
+		\item \verb|int top()|: returns the last inserted without removing it
+		\item \verb|int Count()|: returns the number of items on the stack.
+		\item \verb|bool isEmpty()|: indicates wheather no elements are stored.
+	\end{itemize}
+
+	Aditional operations:
+	\begin{itemize}
+		\item \verb|int Sum()|: returns the sum of all elements on the stack.
+		\item \verb|float Average()|: returns the average of all elements on the stack.
+	\end{itemize}
+
+
+	The implementation of the stack is summarised as follows:
+	\begin{itemize}
+		\item We use singly linked list to implement stack ADT.
+		% \item We will use the following operations of the singly linked to implement stack ADT.
+		% \begin{itemize}
+		% 	\item \verb|int first()|: return the position of first element O(1).
+		% 	\item \verb|void updateFirst(Node e)| Update the position of the first element to Node e O(1).
+		% 	\item \verb|bool isEmpty()|: indicates wheather no elements are stored O(1).
+		% 	\item \verb|void insertFirst(int e)|: insert e at the head of the singly linked list O(1).
+		% \end{itemize}
+		\item The singly linked list class will have the following information.
+		\begin{itemize}
+			\item The reference to the head of the node in singly linked list.
+		\end{itemize}
+		\begin{algorithm}[H]
+			\caption{Class Singly linked list}
+			\begin{algorithmic}
+				\Class{Single\_ll}
+					\State \textbf{Node} head \Comment{The first node in singly linked list, null if linked list is empty}
+				\EndClass
+			\end{algorithmic}
+			\end{algorithm}
+
+		\item To update first node of a singly linked list after we add an element or remove an element in singly linked list, we have to design a method naming \textbf{updateFirst(Node n)} to update the head of singly linked list, which will be really useful for us to implement push and pop function of Stack.
+		\begin{algorithm}[H]
+			\caption{updateFirst method}
+			\begin{algorithmic}
+				\Function{updateFirst}{\textbf{self}, \textbf{Node} n}
+					\State self.head = n
+				\EndFunction{}
+			\end{algorithmic}
+			\end{algorithm}
+
+		\item As we can see in algorithm 3, we will update the head of linked list to \textbf{Node n}, and this method will run in \(O(1)\) time because we just assign the reference of \textbf{Node n} to head. 
+		\item To push and pop in stack, which is implemented by linked list, so we have to push Node object instead of pushing value. Thus, we have to have the Node class.
+		\item The Node class will have the following information.
+		\begin{itemize}
+			\item The value of the element.
+			\item The reference to the next node, \verb|null| if it is the end node.
+		
+			
+			\begin{algorithm}[H]
+				\caption{Class Node}
+				\begin{algorithmic}
+					\Class{Node}
+						\State \textbf{int} value \Comment{The value store in the Node}
+						\State \textbf{Node} next \Comment{The reference to the next node, null if it is the end node}
+					\EndClass
+				\end{algorithmic}
+				\end{algorithm}
+		\end{itemize}
+		\item The stack class holds the following information
+		\begin{itemize}
+			\item The number of elements in the stacks, which is first assigned to 0.
+			\item The sum of all elements in the stacks, which is first assigned to 0.
+			\item The empty singly linked list, with the first Node is null.
+			
+			\begin{algorithm}[H]
+				\caption{class Stack}
+				\begin{algorithmic}
+					\Class{Stack}
+						\State \textbf{int} size \Comment{The number of element in the stack, which first assign to 0 }
+						\State \textbf{int} sum \Comment{The sum of all elements in the stack, which first assign to 0}
+						\State \textbf{Single\_ll} collection \Comment{The empty singly linked list, with the first Node is null.}
+					\EndClass
+				\end{algorithmic}
+			\end{algorithm}
+		\end{itemize}
+	\end{itemize}
+	
+	
+	With reference to the beginning node, both \verb|push| and \verb|pop| operations can be easily implemented such that they run in \(O(1)\) time.
+
+	\begin{itemize}
+		\item \verb|push(e)|
+	\end{itemize}
+	
+	\begin{algorithm}[H]
+		\caption{push operation}
+		\label{push}
+	\begin{algorithmic}[1]
+		\Function{push}{\textbf{self}, \textbf{int} \(e\)}
+		\State \(node \gets \) new \textbf{Node} \Comment{Create a new object Node.}
+		\State \(node.value \gets e\) \Comment{The node will store the element we want to push}
+		\State \(node.next \gets self.collection.first()\) \Comment{The reference to the next Node will be the first Node in linked list}
+		\State \(self.collection.updateFirst(node)\) \Comment{Update the head of the singly linked list}
+		\State \(self.sum \gets  self.sum + e\)\Comment{Update sum}
+		\State \(self.size \gets  self.size + 1\)\Comment{Update size}
+		\EndFunction{}
+	\end{algorithmic}		
+	\end{algorithm}
+
+	The idea of creating push function is that, first we will create a \textbf{Node} object, which stores the value of the element we want to push into the stack, and this object will points to the head of the singly linked list. After that, we have to update the head of the singly linked list to the node that we have just been created. Not only that, because each time we use this function, the number of elements in the stack and the sum of all elements in the stack have to be update each time when we call this function.
+
+	\begin{itemize}
+		\item Correctness
+		\begin{itemize}
+			\item Following the the property of stack is \textbf{last in first out}. Thus, the push operation always push the value at the top of the stack. That is why the function push we have just created always insert the new element at the head of the linked list. After that, we will update the head of the singly linked list. Thus the push operation always correct because it always push the new value into the top of the stack.
+			\item As we can see in line 6 and 7 at \textbf{Algorithm 6}, each time we push an element into the stack, we will update the value of \textbf{sum} and \textbf{size}.
+		\end{itemize}
+		\item Running time
+		\begin{itemize}
+			\item From line 2 to 4, all of the assignments will run in \(0(1)\) time. Not only that, the \textbf(updateFirst(node)) method also run in \(O(1)\) time, and line 6 and  will run in \(0(1)\) time. Thus, this function will run in \(O(1)\) time.
+			
+		\end{itemize}
+	\end{itemize}
+
+
+	% The idea is that, the \verb|head| node will always be the element that was 
+	% most recently enqueued so when an element is enqueued, a new node that 
+	% holds the element is created, we add that node to the head of the list(this pseudocode omits edge cases and error checking for null values in order to keep the answer more succint). However, we have to remember to keep updating the 
+	% variables \verb|length|, \verb|sum|, \verb|reciprocalSum| and \verb|alternatingSum| 
+	% accordingly (we assume 0 is not an input, else we have to check for 0). We add 1 to \verb|length| each time the enqueue operation is successful.
+	%  \verb|sum| and \verb|reciprocalSum| can be updated by just adding the 
+	% enqueued element and its reciprocal to the corresponding sum. For the 
+	% \verb|alternatingSum|, if the current lenght of the queue is even, we add \(q_i - \frac{1}{q_i}\) to it, else we add \(\frac{1}{q_i} - q_i\) for \(q_i\) the enqueued element.
+
+	
+
+	
+	% Since \verb|head| is the most recently enqueued element, \verb|tail| will 
+	% be the next element to be dequeued. the current \verb|tail| will be 
+	% removed from the list, we 
+	% assume there will be a garbage collecting system taking care of 
+	% deallocating the memory of the removed node, otherwise, we can just 
+	% deallocate it ourselves. We then return the value of the newly removed 
+	% node. We also have to update the variables accordingly (again, 
+	% assuming no 0, we have to check for 0 otherwise). We subtract 1 from \verb|length| for each successful dequeue operation. For \verb|sum| and \verb|reciprocalSum|, we just substract \(q_i\) and \(\frac{1}{q_i}\) (\(q_i\) is the dequeued element) from the corresponding sum. For the \verb|alterntingSum|, we will subtract \(q_i - \frac{1}{q_i}\) from it, then we reverse the sign of the sum.
+	\begin{algorithm}[H]
+		\caption{isEmpty operation}
+		\label{isEmpty}
+	\begin{algorithmic}[1]
+		\Function{isEmpty}{\textbf{self}}
+		\If{\(self.size = 0\)}
+			\State \Return{\verb|True|} \Comment{if the size of stack equals to 0, return True}
+		\EndIf{}
+		\State  \Return{\verb|False|} 
+		\EndFunction{}
+	\end{algorithmic}		
+	\end{algorithm}
+
+	IsEmpty function uses to check the stack is empty or not. The stack is empty if and only if there are no elements being stored on the stack. Thus, if the size of the stack equals to 0, the stack is empty, which is being cover in if statement in line 2.
+
+	The running time of this function is \(O(1)\).
+
+	\begin{itemize}
+		\item \verb|pop()|
+	\end{itemize}
+
+	\begin{algorithm}[H]
+		\caption{Pop operation}
+		\label{pop}
+	\begin{algorithmic}[1]
+		\Function{pop}{\textbf{self}}
+		\If{\(self.isEmpty()\)}
+			\State \Return{\verb|null|} \Comment{When the stack is empty, we can't conduct pop operation.}
+		\EndIf{}
+		\State \(\textbf{int } \text{node\_removed} \gets self.collection.first().value\)
+		\State \(self.collection.updateFirst(self.collection.first().next)\)
+		\State \(self.size \gets self.size - 1\)
+		\State \(self.sum \gets self.sum - \text{node\_removed}\)
+		\State \Return{\text{node\_removed}}
+		\EndFunction{}
+	\end{algorithmic}		
+	\end{algorithm}
+
+	% The idea of creating push function is that, first we will create a Node object, which stores the value of the
+	% element we want to push into the stack, and this object will points to the head of the singly linked list. After that,
+	% we have to update the head of the singly linked list to the node that we have just been created. Not only that,
+	% because each time we use this function, the number of elements in the stack and the sum of all elements in the
+	% stack have to be update each time when we call this function.
+
+	The idea of creating pop function is that, first we use the condition statement to check the stack is empty or not by using function \textbf{isEmpty()}. If this function returns True, which means the stack is empty so we can not pop any element out in the stack. Thus we will return \textbf{null}. At vice versa, the function \textbf{isEmpty()} return False, which means the stack is not empty, then will assign the value of the first node in singly linked list (the first node of singly linked list also have to be the head of a stack). After that, we have to update the first element of singly linked list because we have to keep the head Node always be the top of the stack and the first of Node of Singly Linked list. When the element in the stack being popped out, the size of the stack and the sum of stack have to be updated. size will be decreased by 1 and sum will be decreased by the value of the node that being popped out of the stack.
+
+
+	\begin{itemize}
+		\item Correctness
+		\begin{itemize}
+			\item Following the the property of stack is \textbf{last in first out}. Thus, the pop operation always pop the value at the top of the stack. That is why the function pop we have just created always take out element at the head of the linked list. After that, we will update the head of the singly linked list. Thus the pop operation always correct because it always pop the value at the top of the stack out.
+			\item As we can see at line 6 and 7 we also update the value of size and sum of the stack.
+		\end{itemize}
+		\item Running time
+		\begin{itemize}
+			\item The running time of this algorithm is \(O(1)\) time.
+		\end{itemize}
+	\end{itemize}
+	\begin{itemize}
+		\item \verb|top()|
+	\end{itemize}
+
+
+	\begin{algorithm}[H]
+		\caption{top operation}
+		\label{top}
+	\begin{algorithmic}[1]
+		\Function{top}{\textbf{self}}
+		\If{\(self.isEmpty()\)}
+			\State \Return{\verb|null|} \Comment{When the stack is empty, the top of stack is \textbf{null}}
+		\EndIf{}
+		\State \(\text{\textbf{Node} node\_head} \gets self.collection.first().value\)
+		\State \Return{node\_head}
+		\EndFunction{}
+	\end{algorithmic}		
+	\end{algorithm}
+
+	The idea of creating top function is that we will check the stack is empty or not. If the stack is empty, we will return \textbf{null} because when the stack is empty we don't have any elements in stack, the head of stack is null. Otherwise, we will return the head of stack.
+
+	\begin{itemize}
+		\item Correctness
+		\begin{itemize}
+			\item Because in method pop and push, we also update the head of the stack. Thus, the head of stack always point to the correct location. That is why the method count always return the top of the stack without removing it.
+		\end{itemize}
+		\item Running time
+		\begin{itemize}
+			\item The conditional statement will run in \(O(1)\) time and all the assignments and returning of the method will run in \(O(1)\) time so the running time of this methods is \(O(1)\).
+		\end{itemize}
+	\end{itemize}
+
+
+
+
+
+	\begin{itemize}
+		\item \verb|Count()|
+	\end{itemize}
+
+
+
+	\begin{algorithm}[H]
+		\caption{Count operation}
+		\label{Count}
+	\begin{algorithmic}[1]
+		\Function{Count}{\textbf{self}}
+		\State \Return{self.size}
+		\EndFunction{}
+	\end{algorithmic}		
+	\end{algorithm}
+
+
+	The \textbf{Count} method will return the size of the Stack.
+
+	\newpage
+	\begin{itemize}
+		\item Correctness
+		\begin{itemize}
+			\item In push and pop methods, we will increase the size by 1 for push method and decrease the size by 1 for pop methods. Thus, the size of the Stack will always true. 
+		\end{itemize}
+		\item Running time
+		\begin{itemize}
+			\item Because this method just only use to return the size of the stack, which also similar to the number of an element in the stack, so the running time is only \(O(1)\).
+		\end{itemize}
+	\end{itemize}
+
+
+
+	\begin{itemize}
+		\item \verb|Sum()|
+	\end{itemize}
+
+
+
+	\begin{algorithm}[H]
+		\caption{Sum operation}
+		\label{Sum}
+	\begin{algorithmic}[1]
+		\Function{Sum}{\textbf{self}}
+		\State \Return{s.sum}
+		\EndFunction{}
+	\end{algorithmic}		
+	\end{algorithm}
+
+
+	The \textbf{Count} method will return the sum of all elements in the Stack.
+
+	\newpage
+	\begin{itemize}
+		\item Correctness
+		\begin{itemize}
+			\item In push and pop methods, we will increase the sum by the value of \textbf{Node} that being pushed into the stack for push method and decrease the sum by the value of the \textbf{Node} that being popped for pop methods. Thus, the sum of all elements on the Stack will always true. 
+		\end{itemize}
+		\item Running time
+		\begin{itemize}
+			\item Because this method just only use to return the sum of the stack, so the running time is only \(O(1)\).
+		\end{itemize}
+	\end{itemize}
+
+
+	\begin{itemize}
+		\item \verb|Average()|
+	\end{itemize}
+
+
+	\begin{algorithm}[H]
+		\caption{Average operation}
+		\label{Average}
+	\begin{algorithmic}[1]
+		\Function{Average}{\textbf{self}}
+		\State \(\text{average} \gets self.Sum()/self.Count()\)
+		\State \Return{average}
+		\EndFunction{}
+	\end{algorithmic}		
+	\end{algorithm}
+
+
+	Recall that the average is the total sum of the elements divided by the number
+	of elements. Since we already store the size of the stack and the sum of the elements. When a new
+	element get pushed or popped, we also update both of them.
+
+
+	\begin{itemize}
+		\item Correctness
+		\begin{itemize}
+			\item The correctness follows directly from the definition of average. Because we also proved that sum is true and size is true, average equals to \(\frac{\text{sum}}{\text{size}}\), so average have to be true.
+		\end{itemize}
+		\item Running time
+		\begin{itemize}
+			\item Because this method only calculate the division of sum and size so it will cost only \(O(1)\).
+		\end{itemize}
+	\end{itemize}
+
+
+	\newpage\section*{Problem 3}
+	\textbf{a) DESIGN ALGORITHM}
+	\begin{algorithm}[H]
+		\caption{Ex 3}
+	\begin{algorithmic}[1]
+		\Function{\text{pairs\_sum}}{\textbf{array} B, \textbf{int} aim}
+		\State \(\text{i} \gets 0\)
+		\State \(\text{j} \gets B.size() - 1\)
+		\State \(\text{valid\_pairs} \gets 0\)
+		% \For{\(i < j\)}
+		% 	\If{\(B[i] + B[j] > aim or B[i] + B[j] = aim\)}
+		% 		\State \(text{valid\_pairs} \gets text{valid\_pairs} + (j - i)\)
+		% 		\State \(\text{right \gets right - 1}\)
+		% 	\EndIf{}
+		% \EndFor{}
+		\For{\(i < j\)}
+				\If{\(B[i] + B[j] > aim  \text{ or }  B[i] + B[j] = aim\)}      
+				\State \(\text{valid\_pairs} \gets \text{valid\_pairs} + (j - i)\)
+				\State \(\text{j} \gets \text{j} - 1\)
+				\Else{}
+				\State \(\text{i} \gets \text{i} + 1\)
+				\EndIf{}
+			\EndFor{}
+		\State \Return{\text{valid\_pairs}}
+		\EndFunction{}
+	\end{algorithmic}		
+	\end{algorithm}
+
+
+	We will utilize the two-pointer technique to solve this problem. Initially, one pointer will scan from left to right, starting at the first element of the sorted array $B$, while the second pointer will begin at the last element of the ascending array $B$. We'll set the variable for valid pairs to $0$, which we'll return later. Within the loop at line $5$, we'll iterate through each element in array $B$ once. Inside this loop, we'll have a conditional statement to check if:
+	\[ B[i] + B[j] \geq \text{aim} \]
+	If this condition holds true, it means that every element from the $i$th to the $(j - 1)$th position in the array will have a sum with $B[j]$ that is larger than or equal to the aim. Consequently, we'll increment the count of valid pairs by $(j - i)$, then update the second pointer by decrementing it by $1$. Conversely, if the condition is false, we'll move the first pointer up by $1$ position.
+
+
+\textbf{b) CORRECTNESS}: We will use loop invariant to prove the correctness of this algorithm.
+\begin{itemize}
+	\item \textbf{Loop invariant: } The invariant used in this algorithm is :
+	\begin{equation}
+		\text{ For each iteration with }  i < j \text{ such that } B[i] + B[j] \geq aim 
+		\end{equation}
+	\item Before the loop run, the invariant is correct because we don't have any pair i and j.
+	\item Inside a loop we will have a conditional statement, so we will have two situations.
+	\begin{itemize}
+		\item \(B[i] + B[j] \geq aim\) so we will count all pair from i to j - 1. The reason for that is for all element after the index i the value B[i] will be the smallest with \(B[i] + B[j] >= aim\). Thus all other pairs have to be larger than aim. That is why the invariant is still correct.
+		\item In the second case, we will shift the index of i by 1 because at this case \(B[i] + B[j] < aim\) so we have to increase the value of B[i] to make it larger so we shift the index by 1 to the right. As it does not miscount any pair, the invariant is maintained.
+		\item When the loop finishes, which means i == j, it runs through all possible of (i, j) pairs, hence it counts every  indices that will have the sum larger than aim. 
+	\end{itemize}
+	\item In conclusion: The maintainance of the invariant throughout the execution ensures that no valid pair is missed. Thus the count is accurate, leading to the right of the algorithm.
+\end{itemize}
+
+\textbf{c) RUNNING TIME ALGORITHM}
+\begin{itemize}
+	\item  All the assignments in line 2, 3, 4 will run in \(O(1)\) time.
+	\item At while loop at line 5, we can see that inside that loop, we have two condition and only one pointer will move at each turn until i and j meet together(i = j). We call \(n\) will be the length of array B, The first time the distance two pointer will be \(n - 1\). However, because each iteration the distance between of them will decreased by 1, and the loop will terminate when the distance betweeen them equals to 0. Thus the running time of the algorithm will be \(O(n)\). Thus the running time of this algorithm will be \(O(n)\).
+\end{itemize}
+
+
+
+
+
+
+	
+
+
+
+
+
+
+	
+\end{document}
